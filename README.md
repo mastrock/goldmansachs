@@ -1,7 +1,8 @@
 # goldmansachs
 Coderpad Questions
 
-1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”.
+1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
+    Run length encoding: https://github.com/jhasuraj01/6companies30days/blob/main/goldman-sachs/run-length-encoding.md
 
 2. Given an array in which there are arrays that are of length two, the first index of that array has the student name and the second index has the marks scored. Find the maximum average scored by any student. The array can have multiple subjects of marks for a particular student.
 
