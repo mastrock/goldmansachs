@@ -5,30 +5,63 @@ Coderpad Questions
     Run length encoding: https://github.com/jhasuraj01/6companies30days/blob/main/goldman-sachs/run-length-encoding.md
 
 ```java
-import java.util.*;
-class Solution{
-    public static String getSimplifiedString(String inputString){
-        String simplifiedString="";
-        HashMap<Character,Integer> characterCount=new HashMap<Character,Integer>();
-        int count=1;
-        for (int i=1;i<inputString.length();i++){
-            if (inputString.charAt(i)!=inputString.charAt(i-1)){
-                characterCount.put(inputString.charAt(i-1), count);
-                count=1;
-            }
-            else{
-                count++;
+public class Solution {
+    /**
+     * Compresses the given string using run-length encoding
+     * and returns the resulting compressed string.
+     *
+     * Example:
+     *   Input:  "aaabbbbbccccdaa"
+     *   Output: "a3b5c4d1a2"
+     *
+     * @param s the input string to compress
+     * @return a new string containing the compressed representation
+     */
+    public String compressString(String s) {
+        // Handle edge cases: null or empty input.
+        if (s == null || s.length() == 0) {
+            return "";
+        }
+
+        // StringBuilder is ideal for efficient appends.
+        StringBuilder compressed = new StringBuilder();
+
+        char[] chars = s.toCharArray();
+        int charCount = 1;  // We'll start counting from the first character.
+
+        // Traverse from the second character to the end.
+        // Compare chars[i] with chars[i-1] to detect runs.
+        for (int i = 1; i < chars.length; i++) {
+            if (chars[i] == chars[i - 1]) {
+                // Same character, increment run count
+                charCount++;
+            } else {
+                // Different character encountered, write out the previous character and its count
+                compressed.append(chars[i - 1]);
+                if (charCount > 1) {
+                    compressed.append(charCount);
+                }
+                // Reset count for the new character
+                charCount = 1;
             }
         }
-        characterCount.put(inputString.charAt(inputString.length()-1), count);
-        for (char i:characterCount.keySet()){
-            simplifiedString=simplifiedString+i+characterCount.get(i);
+
+        // Append the final character and its count (if > 1) after loop finishes
+        compressed.append(chars[chars.length - 1]);
+        if (charCount > 1) {
+            compressed.append(charCount);
         }
-        return simplifiedString;
+
+        // Return the compressed representation
+        return compressed.toString();
     }
-    public static void main(String args[]){
-        String input="aaaabbbbbbcccddddd";
-        System.out.println(getSimplifiedString(input));
+
+    // Example usage:
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        String input = "aaabbbbbccccdaa";
+        String result = sol.compressString(input);
+        System.out.println("Compressed: " + result);  // Expected: "a3b5c4d1a2"
     }
 }
 ```
