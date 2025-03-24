@@ -146,6 +146,67 @@ public class Solution {
 ```
 
 3. a/b + c/d = simple form
+
+```java
+import java.io.*;
+
+class Solution {
+
+    /**
+     * Computes the Greatest Common Divisor (GCD) using Euclidean Algorithm.
+     */
+    static int gcd(int a, int b) {
+        if (a == 0)
+            return b;
+        return gcd(b % a, a);
+    }
+
+    /**
+     * Simplifies the given numerator and denominator by dividing both with their GCD,
+     * and prints the result in the format "numerator/denominator".
+     */
+    static void lowerFraction(int numerator, int denominator) {
+        if (denominator == 0) {
+            throw new ArithmeticException("Denominator cannot be zero");
+        }
+
+        int gcdValue = gcd(Math.abs(numerator), Math.abs(denominator));
+
+        numerator /= gcdValue;
+        denominator /= gcdValue;
+
+        // Normalize: keep denominator positive
+        if (denominator < 0) {
+            numerator *= -1;
+            denominator *= -1;
+        }
+
+        System.out.println(numerator + "/" + denominator);
+    }
+
+    /**
+     * Adds two fractions (numerator1/denominator1 + numerator2/denominator2),
+     * and prints the result in its simplest form.
+     */
+    static void addFractions(int numerator1, int denominator1, int numerator2, int denominator2) {
+        if (denominator1 == 0 || denominator2 == 0) {
+            throw new ArithmeticException("Denominator cannot be zero");
+        }
+
+        int gcdDenominators = gcd(denominator1, denominator2);
+        int lcmDenominator = (denominator1 / gcdDenominators) * denominator2;
+
+        int adjustedNumerator1 = numerator1 * (lcmDenominator / denominator1);
+        int adjustedNumerator2 = numerator2 * (lcmDenominator / denominator2);
+
+        int resultNumerator = adjustedNumerator1 + adjustedNumerator2;
+
+        lowerFraction(resultNumerator, lcmDenominator);
+    }
+}
+
+```
+
 4. grid [][] contain coins find optimal path to collect most coins (only allowed north and east)
 
 5. Given a string ” A B A B C A B A B C D”, you have to compress it into the following format:
