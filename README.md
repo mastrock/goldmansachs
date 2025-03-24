@@ -1304,3 +1304,89 @@ Input: [1, Integer.MAX_VALUE]
 Output: Integer.MAX_VALUE
 */
 ```
+
+
+34. First unique charactaer in a string
+
+<img width="559" alt="image" src="https://github.com/user-attachments/assets/9da9f295-50d9-4c26-99f8-8f8323805bfa" />
+
+```java
+
+/**
+ * Efficient implementation to find the index of the first unique character in a string.
+ *
+ * Rationale:
+ * - Time complexity is O(n), where n is the length of the input string:
+ *     * One pass to count character frequencies.
+ *     * One additional pass to find the first character with frequency 1.
+ * - Space complexity is O(1):
+ *     * Although we use an array of size 26, it is constant with respect to the input size.
+ * - Leverages the fact that the input only contains lowercase English letters.
+ * - Uses a fixed-size int array to count character frequencies for maximal performance.
+ * - Clean separation of concerns: frequency counting and uniqueness detection are distinct passes.
+ */
+
+public class Solution {
+
+    /**
+     * Returns the index of the first non-repeating character in the string.
+     *
+     * @param s the input string consisting of lowercase English letters
+     * @return the index of the first unique character, or -1 if none exists
+     */
+    public int firstUniqChar(String s) {
+        if (s == null || s.length() == 0) return -1;
+
+        int[] freq = new int[26]; // frequency array for 26 lowercase English letters
+
+        // First pass: count frequencies
+        for (int i = 0; i < s.length(); i++) {
+            freq[s.charAt(i) - 'a']++;
+        }
+
+        // Second pass: find first character with frequency 1
+        for (int i = 0; i < s.length(); i++) {
+            if (freq[s.charAt(i) - 'a'] == 1) {
+                return i;
+            }
+        }
+
+        return -1; // no unique character found
+    }
+}
+
+/*
+Test cases:
+
+Input: "leetcode"
+Output: 0
+Explanation: 'l' is the first non-repeating character
+
+Input: "loveleetcode"
+Output: 2
+Explanation: 'v' is the first non-repeating character
+
+Input: "aabb"
+Output: -1
+Explanation: All characters repeat
+
+Input: "z"
+Output: 0
+Explanation: Only one character
+
+Input: "aadadaad"
+Output: -1
+Explanation: All characters appear more than once
+
+Input: "abcabcdd"
+Output: 6
+Explanation: 'd' is the first character to appear only once
+
+Input: "xxyyzzp"
+Output: 6
+Explanation: 'p' is the only non-repeating character
+*/
+
+```
+
+
