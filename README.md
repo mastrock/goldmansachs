@@ -1,4 +1,4 @@
-# goldmansachs
+<img width="1571" alt="image" src="https://github.com/user-attachments/assets/a4a02a12-3ef7-40ab-ab4d-51bbad9b8464" /># goldmansachs
 Coderpad Questions
 
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
@@ -22,23 +22,59 @@ Here, till A B * of the output, A B repeats twice, but till A B * C *, A B A B C
 10. Find minimum sub array whose sum is at least to the given target. eg: Sub array: 1, 2, 5, 6, 11, 2 Target: 12 Answer: 11, 2
 
 11.  https://leetcode.com/problems/trapping-rain-water/ (Trapping the rainwater).
-12. A variant of Knapsack (0-1 )- https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/ (She wanted the DP solution only. She was not accepting the recursive solution)
+```java
+class Solution {
+    public int trap(int[] height) {
 
-13. There are some students, sitting in a circle. Each student is assigned a roll no (1 to n). There is a teacher who was given an initial roll no and he has to remove the student with initial roll no. and then has to remove the student who was at that position starting from the removed student. Your function should return the last student left.
+        // an elevation map — basically an array of bars of varying height, with equal width 1.
+
+        // Water can be trapped between bars, but only if there is a taller or equally tall bar on both the left and
+        //right of the current bar.
+
+        // The amount of water trapped above a bar is determined by the minimum of the highest bar to its left and
+        //right, minus the height of the current bar.
+
+        int trapped_rain = 0;
+        int[] maxLeft = new int [height.length];
+        int[] maxRight = new int [height.length];
+
+        maxLeft[0] = height[0];
+        maxRight[height.length - 1] = height[height.length - 1];
+
+        for (int i = 1; i < height.length; i++) {
+            maxLeft[i] = Math.max(height[i], maxLeft[i - 1]);
+        }
+
+        for (int i = height.length - 2; i >= 0; i--) {
+            maxRight[i] = Math.max(height[i], maxRight[i + 1]);
+        }
+
+        for (int i = 0; i < height.length; i++){
+            trapped_rain += Math.max(0, Math.min(maxLeft[i], maxRight[i]) - height[i]);
+        }
+
+        return trapped_rain;
+        
+    }
+}
+```
+13. A variant of Knapsack (0-1 )- https://www.geeksforgeeks.org/0-1-knapsack-problem-dp-10/ (She wanted the DP solution only. She was not accepting the recursive solution)
+
+14. There are some students, sitting in a circle. Each student is assigned a roll no (1 to n). There is a teacher who was given an initial roll no and he has to remove the student with initial roll no. and then has to remove the student who was at that position starting from the removed student. Your function should return the last student left.
 Example: 2, 3, 1, 4, 5 start with 3, remove 3, then remove 5, then remove 1 (follow circle), then remove 4. Ans – 2. Problem is similar to https://www.geeksforgeeks.org/josephus-problem-set-1-a-on-solution/
 
-14. Given a list of students with their scores in different subjects find the student with a max average score.
+15. Given a list of students with their scores in different subjects find the student with a max average score.
 
-15. Median of two sorted arrays (without extra space). Link – https://www.geeksforgeeks.org/median-two-sorted-arrays-different-sizes-ologminn-m/
-16. Given a log file, each line begins with some IP address, find the most frequent IP address.
+16. Median of two sorted arrays (without extra space). Link – https://www.geeksforgeeks.org/median-two-sorted-arrays-different-sizes-ologminn-m/
+17. Given a log file, each line begins with some IP address, find the most frequent IP address.
 
-17. https://www.geeksforgeeks.org/find-minimum-element-in-a-sorted-and-rotated-array/
-18. https://www.geeksforgeeks.org/median-two-sorted-arrays-different-sizes-ologminn-m/ O(n) accepted
-19. https://leetcode.com/problems/string-compression/
-20. https://www.geeksforgeeks.org/container-with-most-water/
-21. Repeated Character Whose First Appearance is Leftmost
-22. Find the first maximum length even word from a string
-23. Write a function that takes input and output as shown under:-
+18. https://www.geeksforgeeks.org/find-minimum-element-in-a-sorted-and-rotated-array/
+19. https://www.geeksforgeeks.org/median-two-sorted-arrays-different-sizes-ologminn-m/ O(n) accepted
+20. https://leetcode.com/problems/string-compression/
+21. https://www.geeksforgeeks.org/container-with-most-water/
+22. Repeated Character Whose First Appearance is Leftmost
+23. Find the first maximum length even word from a string
+24. Write a function that takes input and output as shown under:-
     Input (string) Output (string)
     —– ——
     aaa a3
@@ -46,7 +82,7 @@ Example: 2, 3, 1, 4, 5 start with 3, remove 3, then remove 5, then remove 1 (fol
     aaabcdd a3b1c1d2
     a a1
 
-24. a) You are an avid rock collector who lives in southern California. Some rare and desirable rocks just became available in New York, so you are planning a cross-country road trip. There are several other rare rocks that you could pick up along the way. You have been given a grid filled with numbers, representing the number of rare rocks available in various cities across the country. Your objective is to find the optimal path from So_Cal to New_York that would allow you to accumulate the most rocks along the way.
+25. a) You are an avid rock collector who lives in southern California. Some rare and desirable rocks just became available in New York, so you are planning a cross-country road trip. There are several other rare rocks that you could pick up along the way. You have been given a grid filled with numbers, representing the number of rare rocks available in various cities across the country. Your objective is to find the optimal path from So_Cal to New_York that would allow you to accumulate the most rocks along the way.
 
 Note: You can only travel either north (up) or east (right).
 b) Consider adding some additional tests in doTestsPass().
