@@ -4,6 +4,35 @@ Coderpad Questions
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
     Run length encoding: https://github.com/jhasuraj01/6companies30days/blob/main/goldman-sachs/run-length-encoding.md
 
+```java
+import java.util.*;
+class Solution{
+    public static String getSimplifiedString(String inputString){
+        String simplifiedString="";
+        HashMap<Character,Integer> characterCount=new HashMap<Character,Integer>();
+        int count=1;
+        for (int i=1;i<inputString.length();i++){
+            if (inputString.charAt(i)!=inputString.charAt(i-1)){
+                characterCount.put(inputString.charAt(i-1), count);
+                count=1;
+            }
+            else{
+                count++;
+            }
+        }
+        characterCount.put(inputString.charAt(inputString.length()-1), count);
+        for (char i:characterCount.keySet()){
+            simplifiedString=simplifiedString+i+characterCount.get(i);
+        }
+        return simplifiedString;
+    }
+    public static void main(String args[]){
+        String input="aaaabbbbbbcccddddd";
+        System.out.println(getSimplifiedString(input));
+    }
+}
+```
+
 2. Given an array in which there are arrays that are of length two, the first index of that array has the student name and the second index has the marks scored. Find the maximum average scored by any student. The array can have multiple subjects of marks for a particular student.
 
 3. a/b + c/d = simple form
