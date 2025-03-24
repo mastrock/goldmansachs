@@ -179,3 +179,231 @@ Input (UINT n, UINT d) Output (string)
 
 27. Repeating first index. "rahulgorai" - return r
 
+28. Largest tree in a forest
+
+```java
+
+/* Problem Name is &&& Largest Tree &&& PLEASE DO NOT REMOVE THIS LINE. */
+/*
+ **  Instructions:
+ **
+ **  Given a forest ( one or more disconnected trees ), find the root of largest tree
+ **  and return its Id. If there are multiple such roots, return the smallest Id of them.
+ **
+ **  Complete the largestTree function in the editor below.
+ **  It has one parameter, immediateParent, which is a map containing key-value pair indicating
+ **  child -> parent relationship. The key is child and value is the corresponding
+ **  immediate parent.
+ **  Constraints
+ **    - Child cannot have more than one immediate parent.
+ **    - Parent can have more than one immediate child.
+ **    - The given key-value pair forms a well-formed forest ( a tree of n nodes will have n-1 edges )
+ **
+ **  Example:
+ **
+ **  Input:
+ **  { { 1 -> 2 }, { 3 -> 4 } }
+ **
+ **  Expected output: 2
+ **  Explanation: There are two trees one having root of Id 2 and another having root of Id 4.
+ **  Both trees have size 2. The smaller number of 2 and 4 is 2. Hence the answer is 2.
+ */
+
+import java.util.*;
+
+class Solution {
+  /*
+   **  Find the largest tree.
+   */
+  public static int largestTree(final Map<Integer, Integer> immediateParent) {
+    return 0;
+  }
+
+  /*
+   **  Returns true if the tests pass. Otherwise, returns false;
+   */
+  public static boolean testsPass() {
+    // map of test cases to expected results
+    final Map<Map<Integer, Integer>, Integer> testCases = new HashMap<>();
+
+    // example
+    final Map<Integer, Integer> testCaseOneKey = new HashMap<>() {{
+      put(1, 2);
+      put(3, 4);
+    }};
+    testCases.put(testCaseOneKey, 2);
+
+
+    boolean passed = true;
+    for (var entry : testCases.entrySet()) {
+      final int actual = largestTree(entry.getKey());
+      if (actual != entry.getValue()) {
+        passed = false;
+        System.out.printf("Failed for %s%n expected %s, actual %s%n", entry.getKey(), entry.getValue(), actual);
+      }
+    }
+
+    return passed;
+  }
+
+  /*
+   **  Execution entry point.
+   */
+  public static void main(String[] args) {
+    // Run the tests
+    if (testsPass()) {
+      System.out.println("All tests pass");
+    }
+    else {
+      System.out.println("Tests fail.");
+    }
+  }
+}
+```
+
+Solutions
+
+```java
+
+/* Problem Name is &&& Largest Tree &&& PLEASE DO NOT REMOVE THIS LINE. */
+/*
+ **  Instructions:
+ **
+ **  Given a forest ( one or more disconnected trees ), find the root of largest tree
+ **  and return its Id. If there are multiple such roots, return the smallest Id of them.
+ **
+ **  Complete the largestTree function in the editor below.
+ **  It has one parameter, immediateParent, which is a map containing key-value pair indicating
+ **  child -> parent relationship. The key is child and value is the corresponding
+ **  immediate parent.
+ **  Constraints
+ **    - Child cannot have more than one immediate parent.
+ **    - Parent can have more than one immediate child.
+ **    - The given key-value pair forms a well-formed forest ( a tree of n nodes will have n-1 edges )
+ **
+ **  Example:
+ **
+ **  Input:
+ **  { { 1 -> 2 }, { 3 -> 4 } }
+ **
+ **  Expected output: 2
+ **  Explanation: There are two trees one having root of Id 2 and another having root of Id 4.
+ **  Both trees have size 2. The smaller number of 2 and 4 is 2. Hence the answer is 2.
+ */
+
+import java.util.*;
+
+class Solution {
+  /*
+   **  Find the largest tree.
+   */
+  public static int largestTree(final Map<Integer, Integer> immediateParent) {
+    // 1. Build an adjacency map of parent -> list of children
+    Map<Integer, List<Integer>> adjacencyMap = new HashMap<>();
+    // Also track all unique nodes
+    Set<Integer> allNodes = new HashSet<>();
+
+    for (Map.Entry<Integer, Integer> entry : immediateParent.entrySet()) {
+      int child = entry.getKey();
+      int parent = entry.getValue();
+      adjacencyMap
+        .computeIfAbsent(parent, k -> new ArrayList<>())
+        .add(child);
+
+      allNodes.add(child);
+      allNodes.add(parent);
+    }
+
+    // 2. Identify all roots: any node that isn't a child in the immediateParent map
+    //    (i.e., it doesn't appear as a key in immediateParent)
+    Set<Integer> childNodes = immediateParent.keySet();
+    List<Integer> roots = new ArrayList<>();
+    for (int node : allNodes) {
+      if (!childNodes.contains(node)) {
+        roots.add(node);
+      }
+    }
+
+    // 3. For each root, do a DFS or BFS to count tree size.
+    //    Track the largest size found so far.
+    int maxSize = 0;
+    int smallestRootForMaxSize = Integer.MAX_VALUE;
+
+    for (int root : roots) {
+      int size = getTreeSize(root, adjacencyMap);
+      if (size > maxSize) {
+        maxSize = size;
+        smallestRootForMaxSize = root;
+      } else if (size == maxSize && root < smallestRootForMaxSize) {
+        smallestRootForMaxSize = root;
+      }
+    }
+
+    // 4. Return the smallest ID root among the largest trees
+    return smallestRootForMaxSize;
+  }
+
+  // Helper method to get size of tree starting from a given root
+  private static int getTreeSize(int root, Map<Integer, List<Integer>> adjacencyMap) {
+    Deque<Integer> stack = new ArrayDeque<>();
+    Set<Integer> visited = new HashSet<>();
+    stack.push(root);
+    visited.add(root);
+
+    int size = 0;
+    while (!stack.isEmpty()) {
+      int node = stack.pop();
+      size++;
+      for (int child : adjacencyMap.getOrDefault(node, Collections.emptyList())) {
+        if (!visited.contains(child)) {
+          visited.add(child);
+          stack.push(child);
+        }
+      }
+    }
+    return size;
+  }
+
+  /*
+   **  Returns true if the tests pass. Otherwise, returns false;
+   */
+  public static boolean testsPass() {
+    // map of test cases to expected results
+    final Map<Map<Integer, Integer>, Integer> testCases = new HashMap<>();
+
+    // example
+    final Map<Integer, Integer> testCaseOneKey = new HashMap<>() {{
+      put(1, 2);
+      put(3, 4);
+    }};
+    testCases.put(testCaseOneKey, 2);
+
+    boolean passed = true;
+    for (var entry : testCases.entrySet()) {
+      final int actual = largestTree(entry.getKey());
+      if (actual != entry.getValue()) {
+        passed = false;
+        System.out.printf("Failed for %s%n expected %s, actual %s%n",
+                          entry.getKey(), entry.getValue(), actual);
+      }
+    }
+
+    return passed;
+  }
+
+  /*
+   **  Execution entry point.
+   */
+  public static void main(String[] args) {
+    // Run the tests
+    if (testsPass()) {
+      System.out.println("All tests pass");
+    }
+    else {
+      System.out.println("Tests fail.");
+    }
+  }
+}
+
+```
+
