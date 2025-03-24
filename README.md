@@ -1,4 +1,4 @@
-<img width="1571" alt="image" src="https://github.com/user-attachments/assets/a4a02a12-3ef7-40ab-ab4d-51bbad9b8464" /># goldmansachs
+
 Coderpad Questions
 
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
@@ -22,6 +22,7 @@ Here, till A B * of the output, A B repeats twice, but till A B * C *, A B A B C
 10. Find minimum sub array whose sum is at least to the given target. eg: Sub array: 1, 2, 5, 6, 11, 2 Target: 12 Answer: 11, 2
 
 11.  https://leetcode.com/problems/trapping-rain-water/ (Trapping the rainwater).
+<img width="1571" alt="image" src="https://github.com/user-attachments/assets/a4a02a12-3ef7-40ab-ab4d-51bbad9b8464" /># goldmansachs
 ```java
 class Solution {
     public int trap(int[] height) {
