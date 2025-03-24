@@ -1,4 +1,4 @@
-
+<img width="667" alt="image" src="https://github.com/user-attachments/assets/ebe8bfde-0ec6-45f7-81c3-3532ef459135" />
 Coderpad Questions
 
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
@@ -632,7 +632,10 @@ class Solution {
 
 30. Fraction to recurring decimal
 <img width="558" alt="image" src="https://github.com/user-attachments/assets/b946edc1-f230-4a6e-b2e9-09bdee044872" />
+
+
 ```java
+
 /**
  * LeetCode Problem #166: Fraction to Recurring Decimal
  *
@@ -748,4 +751,478 @@ class Solution {
     }
 }
 ```
+
+
+31. Find the number of unique substrings of size k, in a given string
+    
+```java
+/**
+ * Find the number of unique substrings of size k in a given string.
+ *
+ * Short & Simple Thought Process in Comments:
+ * 1) Edge Cases: if k <= 0 or k > s.length(), no valid substring => return 0.
+ * 2) Use Rolling Hash (Rabin-Karp style) to slide over the string in O(n) time.
+ * 3) Maintain a HashSet<Long> of encountered hash values for distinct k-substrings.
+ * 4) Return the size of the HashSet as the count of unique substrings.
+ *
+ * Choice of Data Structures:
+ *  - We use a HashSet<Long> to quickly check for uniqueness in O(1) average time.
+ *  - A rolling hash approach ensures we can compute each k-length substring hash in O(1)
+ *    after the initial substring, drastically reducing computational overhead.
+ *
+ * Complexity:
+ *  - Time: O(n) for a string of length n, because each step in the sliding window 
+ *    updates the hash in constant time, and set operations are O(1) average.
+ *  - Space: O(n) in the worst case if all k-length substrings are distinct.
+ *
+ * Below is a production-ready implementation with thorough explanatory comments.
+ * We also include an example main method demonstration.
+ */
+import java.util.*;
+
+public class SolutionUniqueSubstrings {
+    
+    // ---------------------------
+    // Main API method
+    // ---------------------------
+    public int countUniqueSubstringsOfSizeK(String s, int k) {
+        // 1) Edge case checks
+        if (s == null || k <= 0 || k > s.length()) {
+            return 0;
+        }
+        
+        // 2) Rolling Hash parameters:
+        //    We'll use base and modulus to reduce collisions
+        //    base ~ some prime near the character set size, modulus ~ large prime
+        //    to reduce collisions; for demonstration, we pick fairly large values.
+        long base = 257L; // prime > typical ASCII or extended char set
+        long mod = 1000000007L; // large prime for modulus
+        
+        // 3) Precompute the highest power of base^(k-1) mod for removing leading digit
+        long highestPower = 1;
+        for (int i = 0; i < k - 1; i++) {
+            highestPower = (highestPower * base) % mod;
+        }
+        
+        HashSet<Long> seen = new HashSet<>();   // tracks all distinct hash values
+        long currentHash = 0;
+        
+        // 4) Build the hash of the first k-length substring
+        for (int i = 0; i < k; i++) {
+            // Convert character to int
+            int charVal = s.charAt(i);
+            currentHash = (currentHash * base + charVal) % mod;
+        }
+        // Add it to our set
+        seen.add(currentHash);
+        
+        // 5) Now slide over the string from index k to end
+        for (int i = k; i < s.length(); i++) {
+            int newCharVal = s.charAt(i);
+            int oldCharVal = s.charAt(i - k);
+            
+            // Remove the leading character's contribution, then add new char
+            // a) Subtract leading char's 'weight' -> oldCharVal * highestPower
+            long toRemove = (oldCharVal * highestPower) % mod;
+            currentHash = (currentHash - toRemove) % mod;
+            // in Java, negative mod fix
+            if (currentHash < 0) {
+                currentHash += mod;
+            }
+            
+            // b) Multiply by base and add new char
+            currentHash = (currentHash * base + newCharVal) % mod;
+            
+            // 6) Store the new hash
+            seen.add(currentHash);
+        }
+        
+        // The count of unique k-length substrings is simply the size of the set
+        return seen.size();
+    }
+    
+    // ---------------------------
+    // Demonstration / Testing
+    // ---------------------------
+    public static void main(String[] args) {
+        SolutionUniqueSubstrings solver = new SolutionUniqueSubstrings();
+
+        // Example 1:
+        String s1 = "abcabcbb";
+        int k1 = 3;
+        // Substrings of length 3:
+        //  "abc", "bca", "cab", "abc", "bcb", "cbb"
+        //  Distinct => "abc", "bca", "cab", "bcb", "cbb" => 5
+        int result1 = solver.countUniqueSubstringsOfSizeK(s1, k1);
+        System.out.println("Unique substrings of size " + k1 + " in \"" + s1 + "\": " + result1); 
+        // Expected output => 5
+
+        // Example 2:
+        String s2 = "aaaaa";
+        int k2 = 2;
+        // Substrings of length 2: "aa", "aa", "aa", "aa"
+        // Distinct => just "aa"
+        int result2 = solver.countUniqueSubstringsOfSizeK(s2, k2);
+        System.out.println("Unique substrings of size " + k2 + " in \"" + s2 + "\": " + result2); 
+        // Expected output => 1
+
+        // Example 3:
+        String s3 = "abcdef";
+        int k3 = 2;
+        // Substrings of length 2: "ab", "bc", "cd", "de", "ef" => all distinct => 5
+        int result3 = solver.countUniqueSubstringsOfSizeK(s3, k3);
+        System.out.println("Unique substrings of size " + k3 + " in \"" + s3 + "\": " + result3);
+        // Expected => 5
+    }
+}
+
+```
+
+32. Problem: 
+"""
+A popular online retailer allows vendors to specify different prices in advance
+for the same item throughout the day. We now need to design an algorithm that
+helps identify the lowest price for the item at any point of the day.
+
+Assumptions:
+
+For the algorithm, assume all vendors are selling the same product
+and there is only one product being sold. Given a list that has
+vendor information - ( startTime, endTime, price ) of the deal,
+return a sorted list with different possible intervals and
+the least price of the product during the interval.
+
+The interval is inclusive of start and end time.
+
+All the 3 values passed by the vendor are integers.
+
+sampleInput = { new Interval( 1, 5, 20 ), new Interval( 3, 8, 15 ), new Interval( 7, 10, 8 ) };
+expectedOutput = { new Interval( 1, 2, 20 ), new Interval( 3, 6, 15 ), new Interval( 7, 10, 8 ) };
+
+"""
+
+Solution:
+
+```java
+
+/*
+ * ****************************************************************************
+ *  A Popular Online Retailer:
+ *  -------------------------
+ *  Vendors can each specify a startTime, endTime, and price for a product deal,
+ *  covering an inclusive time interval [startTime..endTime].
+ *  Multiple vendors can overlap in time, each with their own price.
+ *  
+ *  We want to combine these possibly-overlapping intervals to produce a list
+ *  of sorted, non-overlapping intervals in which each interval reflects the
+ *  cheapest (lowest) price available during that particular timespan.
+ *  
+ *  Example:
+ *    Input intervals: 
+ *      (1, 5, 20),  (3, 8, 15),  (7, 10, 8)
+ *    Sorted by startTime, they overlap in the ranges [3..5] and [7..8].
+ *    We must figure out the minimum price in each overlapping segment.
+ *    The final intervals become:
+ *      [1..2]  -> only one interval (1..5, 20) active => price = 20
+ *      [3..6]  -> intervals (1..5, 20) & (3..8, 15) overlap => min price = 15
+ *      [7..10] -> intervals (3..8, 15) & (7..10, 8) overlap => min price = 8
+ *  
+ *  --> Expected Output: (1, 2, 20), (3, 6, 15), (7, 10, 8)
+ *
+ * ****************************************************************************
+ *
+ *  Implementation Approach:
+ *  ------------------------
+ *  1) We represent each vendor interval [startTime, endTime, price] in a 
+ *     small internal structure "Interval".
+ *
+ *  2) We convert each input interval into two "events":
+ *       - (time = startTime,  price, delta = +1) to indicate the price 
+ *         is becoming active at time = startTime.
+ *       - (time = endTime+1,  price, delta = -1) to indicate the price 
+ *         stops being active immediately after endTime (because it's inclusive).
+ *     This technique is commonly known as a "Line Sweep" or "Sweep Line" approach.
+ *
+ *  3) Sort all these events by:
+ *       (a) ascending time
+ *       (b) if tie on time, then process +1 (start) before -1 (end)
+ *
+ *  4) Maintain a min-heap (PriorityQueue<Integer>) holding all currently active prices, 
+ *     coupled with a HashMap<Integer, Integer> to track how many times a given price 
+ *     is active. (Because multiple intervals can share the same price.)
+ *
+ *     - When we see an event with delta = +1, we add/increment that price in the map,
+ *       and if it’s newly encountered, we push it into the min-heap.
+ *     - When we see an event with delta = -1, we decrement that price’s active count 
+ *       in the map. If the count goes to zero, we’ll lazily remove it from the min-heap 
+ *       at some point (i.e., we keep popping from the heap until the top’s count 
+ *       is nonzero).
+ *
+ *  5) The top of the min-heap at any time gives us the currently cheapest price 
+ *     among those intervals that are active. As we move from one event’s time to the next, 
+ *     if the cheapest price changes, we conclude the previous interval ended, 
+ *     and we begin a new interval with the updated minimum price.
+ *
+ *  6) We store these finalized intervals in a result list, carefully handling boundaries:
+ *     - The "start" time for a cheapest-price interval is the first moment 
+ *       that price became the cheapest.
+ *     - The "end" time is the moment right before the price changes or no interval 
+ *       remains active.
+ *
+ *  7) Output:
+ *     The final result is a sorted list of intervals with distinct time segments 
+ *     and the lowest price in each segment.
+ *
+ * ****************************************************************************
+ *
+ *  Complexity:
+ *  -----------
+ *  - Let N = number of input intervals.
+ *  - We produce up to 2N events, then sort them in O(N log N) time.
+ *  - We iterate over these events once (O(N)), each event insertion/removal 
+ *    from a min-heap is O(log N) worst-case, so total O(N log N).
+ *  - The space complexity is O(N) for storing events, the heap, and the map.
+ *
+ * ****************************************************************************
+ *
+ *  Implementation Details for a Single CoderPad-Class "Solution":
+ *  --------------------------------------------------------------
+ *  - We'll define a nested static class Interval within this single "Solution" class.
+ *  - We'll implement a main(...) method at the bottom that demonstrates usage 
+ *    by creating sample input and printing the result.
+ *  - We'll provide a helper method "getLowestPriceIntervals(Interval[] input)" 
+ *    which performs the line-sweep approach and returns a List<Interval>.
+ *
+ * ****************************************************************************
+ *
+ *  Short & Simple Thought Process:
+ *    - Convert intervals to "start" & "end+1" events
+ *    - Sort events
+ *    - Sweep across times:
+ *       + Add new intervals' prices in min-heap
+ *       + Remove intervals' prices that ended 
+ *       + Track changes of the top of the heap to finalize intervals
+ *
+ * ****************************************************************************
+ *
+ *  Explanation of Data Structures:
+ *  -------------------------------
+ *  1) PriorityQueue<Integer> (Min-Heap): 
+ *     - We store all active prices so that we can efficiently query 
+ *       the smallest price in O(1) time (top of the heap).
+ *     - Each insertion/removal is O(log N).
+ *
+ *  2) HashMap<Integer, Integer> activeCount:
+ *     - Maps a price -> the count of how many intervals are currently contributing 
+ *       that price (due to overlapping intervals).
+ *     - This is crucial for "lazy" deletion. We only pop from the heap while 
+ *       the top price has a count of zero in the map (meaning it’s no longer active).
+ *
+ * ****************************************************************************
+ */
+
+import java.util.*;
+
+public class Solution {
+    
+    /**
+     * A minimal data structure to store intervals: [startTime, endTime, price].
+     * We'll keep it as a static nested class inside "Solution" to satisfy
+     * the single-class requirement in this coderpad-style file.
+     */
+    static class Interval {
+        public int start;
+        public int end;
+        public int price;
+        
+        public Interval(int s, int e, int p) {
+            this.start = s;
+            this.end = e;
+            this.price = p;
+        }
+        
+        @Override
+        public String toString() {
+            // Just for easy printing
+            return "(" + start + ", " + end + ", " + price + ")";
+        }
+    }
+    
+    /**
+     * Main public method that performs the line-sweep approach:
+     * Takes an array of intervals describing (startTime, endTime, price).
+     * Returns a sorted list of intervals with the minimal price in each segment.
+     */
+    public List<Interval> getLowestPriceIntervals(Interval[] intervals) {
+        // Edge case: no input intervals => empty result
+        if (intervals == null || intervals.length == 0) {
+            return new ArrayList<>();
+        }
+        
+        // Step 1: Build the "events" array. 
+        //   We'll store them as int[]: { time, price, delta }
+        //   where delta = +1 => start, delta = -1 => end
+        //   "end" in the sense that the price ends right after 'endTime' => event at (endTime + 1).
+        List<int[]> events = new ArrayList<>();
+        
+        for (Interval iv : intervals) {
+            // Start event
+            events.add(new int[] { iv.start, iv.price, 1 });
+            // End event (immediately after iv.end => iv.end + 1) 
+            // be careful if iv.end == Integer.MAX_VALUE, but we'll ignore that corner here
+            events.add(new int[] { iv.end + 1, iv.price, -1 });
+        }
+        
+        // Step 2: Sort events primarily by ascending time,
+        //         then break ties by delta in descending order (start before end).
+        // This ensures if two events share the same time, we process start events (+1) 
+        // before end events (-1).
+        events.sort((a, b) -> {
+            if (a[0] != b[0]) return Integer.compare(a[0], b[0]);  // compare time
+            return Integer.compare(b[2], a[2]); // for tie on time, +1 should come first
+        });
+        
+        // Step 3: We'll keep a PriorityQueue to track all active prices (min-heap)
+        //         and a HashMap<price, count> for how many intervals are currently active with that price.
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+        Map<Integer, Integer> activeCount = new HashMap<>();
+        
+        // We'll store the final intervals in a list
+        List<Interval> result = new ArrayList<>();
+        
+        // We track the current minimum price and the time that min price started
+        int currentMinPrice = -1;
+        int currentMinStart = -1;
+        
+        // We'll also track the "previous time" so we know the range covered by the last stable price
+        int prevTime = events.get(0)[0]; 
+        
+        // A small helper to "clean" the top of the heap from stale entries 
+        // (i.e., those with count=0 in the activeCount).
+        Runnable cleanTop = () -> {
+            while (!minHeap.isEmpty() && activeCount.getOrDefault(minHeap.peek(), 0) == 0) {
+                minHeap.poll();
+            }
+        };
+        
+        // Step 4: Process the events in ascending time order
+        int i = 0;
+        while (i < events.size()) {
+            int curTime = events.get(i)[0];
+            
+            // If we've moved forward in time from prevTime => finalize intervals from [prevTime..curTime-1].
+            if (curTime != prevTime) {
+                cleanTop.run(); // ensure the heap top is valid
+                // The valid minimum is the top of the heap, or -1 if empty
+                int validMin = minHeap.isEmpty() ? -1 : minHeap.peek();
+                
+                // If we had a "currentMinPrice" that was valid, it covered [start..(curTime-1)]
+                if (currentMinPrice != -1) {
+                    // We finalize the old interval if the old min hasn't changed
+                    // If the min changed earlier, we would have closed it. 
+                    // But let's be consistent with the logic:
+                    if (currentMinPrice == validMin) {
+                        // The min remained the same across [prevTime..(curTime-1)]
+                        // Do nothing special, we continue
+                    } else {
+                        // The min must have changed or become -1 
+                        // => we close out the old interval at (prevTime - 1)? 
+                        // Actually, we do it at (curTime - 1) because we didn't finalize it earlier
+                        result.add(new Interval(currentMinStart, curTime - 1, currentMinPrice));
+                        currentMinPrice = -1; 
+                    }
+                }
+                // If we never had a valid min or if we ended it, we do nothing here.
+
+                // Next we check if there's a valid new min for [curTime..∞) 
+                // and update currentMinPrice if needed.
+                if (validMin != -1 && currentMinPrice == -1) {
+                    currentMinPrice = validMin;
+                    currentMinStart = curTime;
+                }
+                
+                // Move forward in time
+                prevTime = curTime;
+            }
+            
+            // Now handle all events at the current time
+            int timeGroup = curTime;
+            while (i < events.size() && events.get(i)[0] == timeGroup) {
+                int[] ev = events.get(i);
+                int eventTime = ev[0];
+                int price = ev[1];
+                int delta = ev[2];
+                
+                if (delta == 1) { // start event
+                    activeCount.put(price, activeCount.getOrDefault(price, 0) + 1);
+                    // If it's newly added (count=1), push into minHeap
+                    if (activeCount.get(price) == 1) {
+                        minHeap.offer(price);
+                    }
+                } else { // delta == -1 => end event
+                    // decrement the count
+                    if (activeCount.containsKey(price)) {
+                        activeCount.put(price, activeCount.get(price) - 1);
+                    }
+                }
+                i++;
+            }
+            
+            // After processing all events at this time, see if the min changed
+            cleanTop.run();
+            int newMin = minHeap.isEmpty() ? -1 : minHeap.peek();
+            
+            if (newMin != currentMinPrice) {
+                // If we had an old min, close it out at (curTime-1)
+                if (currentMinPrice != -1) {
+                    result.add(new Interval(currentMinStart, curTime - 1, currentMinPrice));
+                }
+                // Start a new interval if newMin != -1
+                currentMinPrice = newMin;
+                if (currentMinPrice != -1) {
+                    currentMinStart = curTime;
+                }
+            }
+        }
+        
+        // The process above closes intervals each time the min changes or time jumps. 
+        // Because we only do that from "prevTime..(curTime-1)", 
+        // we do not have any leftover interval beyond the last event, 
+        // as there's no more active coverage after the final end events.
+        
+        return result;
+    }
+    
+    // -----------------------------------------------------------------------
+    //  MAIN: A simple demonstration of usage in a single coderpad class.
+    // -----------------------------------------------------------------------
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+        
+        // Sample Input
+        Interval[] sampleInput = {
+            new Interval(1, 5, 20),
+            new Interval(3, 8, 15),
+            new Interval(7, 10, 8)
+        };
+        
+        // Expected Output:
+        //   [ (1, 2, 20), (3, 6, 15), (7, 10, 8) ]
+        
+        List<Interval> result = solution.getLowestPriceIntervals(sampleInput);
+        
+        System.out.println("Result Intervals (lowest price coverage):");
+        for (Interval iv : result) {
+            System.out.println(iv);
+        }
+        // Visually confirm that it matches the expected intervals.
+    }
+}
+
+
+```
+<img width="667" alt="image" src="https://github.com/user-attachments/assets/fd65f5b2-df9d-40ad-a44a-e8e5dc3d0fdb" />
+<img width="667" alt="image" src="https://github.com/user-attachments/assets/b527e053-1319-4ba7-86b7-e4bde5e74b85" />
+
+
 
