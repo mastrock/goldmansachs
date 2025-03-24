@@ -1756,6 +1756,18 @@ public class PathWithMaximumGold {
 
 ```java
 
+// Check every cell: If it has gold (value > 0), start a DFS there.
+
+// DFS and Collect: Add the cell’s gold to the running total, mark it as visited.
+
+// Explore Neighbors: Visit up/down/left/right neighbors if they have gold and are unvisited.
+
+// Track Maximum: Update a global maximum each time you add new gold.
+
+// Backtrack: Unmark the cell before exploring other paths, ensuring all possibilities are checked.
+
+
+
 public class Solution {
     
     // Directions to move up, down, left, right
