@@ -1,4 +1,3 @@
-<img width="667" alt="image" src="https://github.com/user-attachments/assets/ebe8bfde-0ec6-45f7-81c3-3532ef459135" />
 Coderpad Questions
 
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
@@ -1226,3 +1225,82 @@ public class Solution {
 
 
 
+33. find the second smallest number in an array
+
+```java
+/**
+ * Efficient implementation to find the second smallest number in an array.
+ *
+ * Rationale:
+ * - Time complexity is O(n): We traverse the array once.
+ * - Space complexity is O(1): No extra data structures used, only two tracking variables.
+ * - We handle edge cases like:
+ *     * Arrays with fewer than 2 distinct elements (throws exception)
+ *     * Arrays with duplicates
+ *     * Negative values and integer boundaries
+ * - The algorithm tracks both the smallest and the second smallest elements in one pass.
+ * - Proper use of Integer.MAX_VALUE ensures correctness even with negative numbers.
+ */
+
+public class Solution {
+
+    /**
+     * Returns the second smallest distinct element in the array.
+     *
+     * @param nums the array of integers
+     * @return the second smallest distinct integer
+     * @throws IllegalArgumentException if fewer than 2 distinct elements exist
+     */
+    public int findSecondSmallest(int[] nums) {
+        if (nums == null || nums.length < 2) {
+            throw new IllegalArgumentException("Array must contain at least two elements.");
+        }
+
+        int first = Integer.MAX_VALUE;
+        int second = Integer.MAX_VALUE;
+
+        for (int num : nums) {
+            if (num < first) {
+                second = first;
+                first = num;
+            } else if (num > first && num < second) {
+                second = num;
+            }
+        }
+
+        if (second == Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Array must contain at least two distinct elements.");
+        }
+
+        return second;
+    }
+}
+
+/*
+Test cases:
+
+Input: [3, 1, 4, 1, 5]
+Output: 3
+
+Input: [2, 2, 2]
+Throws IllegalArgumentException (no second distinct element)
+
+Input: [Integer.MAX_VALUE, Integer.MIN_VALUE, 0]
+Output: 0
+
+Input: [-5, -1, -7, -3]
+Output: -5
+
+Input: [1, 2]
+Output: 2
+
+Input: [5, 1, 2, 1, 5, 2]
+Output: 2
+
+Input: [7, 7, 6, 5, 5, 5, 6]
+Output: 6
+
+Input: [1, Integer.MAX_VALUE]
+Output: Integer.MAX_VALUE
+*/
+```
