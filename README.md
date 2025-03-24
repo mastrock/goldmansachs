@@ -630,3 +630,122 @@ class Solution {
     }
     ```
 
+30. Fraction to recurring decimal
+<img width="558" alt="image" src="https://github.com/user-attachments/assets/b946edc1-f230-4a6e-b2e9-09bdee044872" />
+```java
+/**
+ * LeetCode Problem #166: Fraction to Recurring Decimal
+ *
+ * We want to convert a fraction (numerator/denominator) into its decimal string representation.
+ * If the fractional part repeats, we must enclose the repeating sequence in parentheses.
+ *
+ * Below is a production-ready, thoroughly commented solution that:
+ *  1) Handles signs correctly (including 0).
+ *  2) Uses a Map<Long, Integer> to track the position of each remainder in the result,
+ *     so we know where the repeating portion begins.
+ *  3) Efficiently builds the output using StringBuilder.
+ *  4) Avoids integer overflow by working with long values for divisions.
+ *
+ * Short and Simple Thought Process in Comments:
+ *  1) Capture sign.
+ *  2) Handle integer division part.
+ *  3) Move to remainder and store each remainder in a map alongside the current length of the result.
+ *     If we see the remainder again, that means the digits between the first occurrence and now are repeating.
+ *  4) Insert parentheses accordingly and return.
+ *
+ * Choice of Data Structures:
+ *  - StringBuilder for efficient string concatenations.
+ *  - HashMap<Long, Integer> to map each remainder to the position in the resulting decimal string,
+ *    enabling O(1) lookups to detect the start of the repeating cycle.
+ *
+ * Performance Complexity:
+ *  - The main loop processes each new remainder at most once until it repeats or becomes zero,
+ *    making the time complexity O(k), where k is the number of digits before repetition or termination.
+ *  - Space complexity is also O(k) due to storing each unique remainder at most once in the map.
+ *
+ * This solution is designed for clarity, correctness, and speed.
+ * It should run in constant space relative to the size of the integer range constraints,
+ * but variable space/time in proportion to the output decimal length.
+ */
+
+class Solution {
+    public String fractionToDecimal(int numerator, int denominator) {
+        // Handle the zero numerator edge case up front: 0 / any_non_zero => "0"
+        if (numerator == 0) return "0";
+
+        // Use StringBuilder for efficient construction of the result.
+        StringBuilder result = new StringBuilder();
+
+        // ----------------------------
+        // 1. Determine the sign
+        // ----------------------------
+        // We use XOR trick: if exactly one is negative => negative result
+        boolean isNegative = (numerator < 0) ^ (denominator < 0);
+        if (isNegative) {
+            result.append("-");
+        }
+
+        // Convert both numerator and denominator to longs to avoid overflow.
+        long longNumerator = Math.abs((long) numerator);
+        long longDenominator = Math.abs((long) denominator);
+
+        // ----------------------------
+        // 2. Append the integer part
+        // ----------------------------
+        long integerPart = longNumerator / longDenominator;
+        result.append(integerPart);
+
+        // Calculate remainder
+        long remainder = longNumerator % longDenominator;
+        // If no remainder => perfect division => return current result
+        if (remainder == 0) {
+            return result.toString();
+        }
+
+        // ----------------------------
+        // 3. Append decimal point
+        // ----------------------------
+        result.append(".");
+
+        // ----------------------------
+        // 4. Handle fractional part with repeating detection
+        // ----------------------------
+        // remainderIndexMap will store remainder -> the position in the result
+        // where the corresponding digit was inserted
+        // Key: remainder, Value: index in the StringBuilder
+        Map<Long, Integer> remainderIndexMap = new HashMap<>();
+        
+        // Current index in the string builder is used to know where the next digit will appear
+        // We'll insert the repeating parentheses once we see the same remainder again
+        // remainderIndexMap helps detect and locate the repeating sequence
+        while (remainder != 0) {
+            // If we have already seen this remainder, that means the decimals are repeating
+            if (remainderIndexMap.containsKey(remainder)) {
+                // Insert "(" at the index where we first saw this remainder
+                int startRepeatIndex = remainderIndexMap.get(remainder);
+                result.insert(startRepeatIndex, "(");
+                // Append ")" at the current end of the string
+                result.append(")");
+                break;
+            }
+
+            // Store the current remainder with its corresponding index in the result
+            remainderIndexMap.put(remainder, result.length());
+
+            // "Bring down a 0" => multiply remainder by 10
+            remainder *= 10;
+
+            // Next digit in the fractional portion
+            long nextDigit = remainder / longDenominator;
+            // Append it
+            result.append(nextDigit);
+
+            // Update remainder
+            remainder %= longDenominator;
+        }
+
+        return result.toString();
+    }
+}
+```
+
