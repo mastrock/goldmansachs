@@ -68,6 +68,83 @@ public class Solution {
 
 2. Given an array in which there are arrays that are of length two, the first index of that array has the student name and the second index has the marks scored. Find the maximum average scored by any student. The array can have multiple subjects of marks for a particular student.
 
+```java
+
+🧠 Thought Process
+We need to:
+1. Track total scores and count of scores for each student.
+2. Compute average per student.
+3. Keep track of the maximum average seen.
+
+Use a Map<String, int[]>:
+- Key: Student name
+- Value: int[2] → [0]: total score, [1]: count
+
+At the end, iterate through the map and calculate average per student, storing the max.
+
+✅ Constraints
+1. Scores are integers.
+2. You can assume valid input (no missing or malformed entries).
+3. Student names are case-sensitive.
+
+
+import java.util.*;
+
+public class Solution {
+
+    /**
+     * Returns the maximum average score among all students.
+     *
+     * @param records A list of student name and score pairs.
+     * @return Maximum average score as double.
+     */
+    public static double getMaxAverageScore(List<List<String>> records) {
+        if (records == null || records.isEmpty()) {
+            throw new IllegalArgumentException("Input records cannot be null or empty");
+        }
+
+        // Map to store: student -> [totalScore, count]
+        Map<String, int[]> studentScores = new HashMap<>();
+
+        for (List<String> record : records) {
+            if (record.size() != 2) continue;
+
+            String name = record.get(0);
+            int score = Integer.parseInt(record.get(1));
+
+            studentScores.computeIfAbsent(name, k -> new int[2]);
+            studentScores.get(name)[0] += score; // total
+            studentScores.get(name)[1] += 1;     // count
+        }
+
+        double maxAverage = Double.MIN_VALUE;
+
+        for (Map.Entry<String, int[]> entry : studentScores.entrySet()) {
+            int total = entry.getValue()[0];
+            int count = entry.getValue()[1];
+            double avg = (double) total / count;
+            maxAverage = Math.max(maxAverage, avg);
+        }
+
+        return maxAverage;
+    }
+
+    public static void main(String[] args) {
+        List<List<String>> input = Arrays.asList(
+            Arrays.asList("Alice", "90"),
+            Arrays.asList("Bob", "80"),
+            Arrays.asList("Alice", "100"),
+            Arrays.asList("Bob", "70"),
+            Arrays.asList("Charlie", "95")
+        );
+
+        double result = getMaxAverageScore(input);
+        System.out.println("Maximum average score: " + result); // Output: 95.0
+    }
+}
+
+```
+
 3. a/b + c/d = simple form
 4. grid [][] contain coins find optimal path to collect most coins (only allowed north and east)
 
