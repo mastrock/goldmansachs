@@ -545,3 +545,88 @@ class Solution {
 
 ```
 
+
+29. Top K Frequent Elements
+    <img width="558" alt="image" src="https://github.com/user-attachments/assets/51f4acf4-f8cf-4b04-b8fb-cd02b6a8b99f" />
+
+    ```java
+    /**
+     * Returns the k most frequent elements from the given array of integers.
+     *
+     * Detailed Explanation of the Steps:
+     *   1) Create a frequency map freqMap:
+     *      - Key: Integer (the element)
+     *      - Value: Integer (the frequency of that element)
+     *      This lets us track how many times each integer appears in O(n) time.
+     *
+     *   2) Build an array of lists (buckets), where index i in 'buckets' corresponds 
+     *      to a list of elements that appear i times.
+     *      - The size of this array is nums.length + 1, because the highest possible
+     *        frequency of any element is n (if all elements are identical).
+     *
+     *   3) For each unique number in freqMap, append it to the corresponding bucket 
+     *      based on its frequency.
+     *
+     *   4) Traverse the buckets from the highest frequency index down to the lowest,
+     *      and collect elements until we've collected k of them. 
+     *
+     * Time Complexity:
+     *   - Step 1 (frequency map creation): O(n).
+     *   - Step 2 (bucket array creation) : O(n).
+     *   - Step 3 (filling buckets)       : O(n) in worst case (each element is unique).
+     *   - Step 4 (collecting top k)      : O(n) in worst case.
+     *   => Overall O(n).
+     *
+     * Space Complexity:
+     *   - freqMap can have up to n entries in the worst case => O(n).
+     *   - buckets array is size n+1, with each index a list => O(n).
+     *   => Overall O(n).
+     *
+     * @param nums array of integers
+     * @param k number of most frequent elements to retrieve
+     * @return an array of the k most frequent integers in any order
+     */
+    public int[] topKFrequent(int[] nums, int k) {
+       // 1) Build the frequency map
+        Map<Integer, Integer> freqMap = new HashMap<>();
+        for (int num : nums) {
+            freqMap.put(num, freqMap.getOrDefault(num, 0) + 1);
+        }
+        
+        // 2) Create the buckets: an array of lists, where index = frequency
+        // Maximum frequency can be n, hence length = n + 1
+        List<Integer>[] buckets = new List[nums.length + 1];
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = new ArrayList<>();
+        }
+        
+        // 3) Fill the buckets based on frequency
+        // For each unique element, place it into the list corresponding to its frequency
+        for (Map.Entry<Integer, Integer> entry : freqMap.entrySet()) {
+            int number = entry.getKey();
+            int frequency = entry.getValue();
+            buckets[frequency].add(number);
+        }
+        
+        // 4) Collect the top k frequent elements
+        List<Integer> result = new ArrayList<>(k);
+        
+        // Start from the highest frequency and go down
+        for (int freq = buckets.length - 1; freq > 0 && result.size() < k; freq--) {
+            for (int val : buckets[freq]) {
+                result.add(val);
+                if (result.size() == k) {
+                    break;
+                }
+            }
+        }
+        
+        // Convert the result list to an array
+        int[] output = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            output[i] = result.get(i);
+        }
+        return output;
+    }
+    ```
+
