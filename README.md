@@ -1389,4 +1389,205 @@ Explanation: 'p' is the only non-repeating character
 
 ```
 
+35. Encode given string by replacing substrings with prefix same as itself with *
+```java
+/**
+ * Efficient implementation to encode a string by replacing substrings that begin with
+ * a previously occurred prefix (including itself) with '*'.
+ *
+ * Rationale:
+ * - This problem is interpreted as:
+ *     For a string `s`, at each index `i > 0`, if the substring from `i` matches the prefix `s[0..i-1]`,
+ *     then we replace the entire matching segment with '*'.
+ *
+ * - Time complexity is O(n²) in the worst case, but optimized through substring comparisons.
+ * - Space complexity is O(n) for constructing the result.
+ * - Proper use of StringBuilder ensures better performance compared to repeated string concatenation.
+ * - Assumes prefix replacement is greedy: replaces as much as it can at the earliest match.
+ */
 
+public class Solution {
+
+    /**
+     * Encodes a given string by replacing repeating prefixes with '*'.
+     *
+     * @param s the original input string
+     * @return encoded string with prefix-based substitutions
+     */
+    public String encodeByPrefix(String s) {
+        if (s == null || s.length() == 0) return s;
+
+        StringBuilder encoded = new StringBuilder();
+        int i = 0;
+        while (i < s.length()) {
+            boolean replaced = false;
+            // check for a prefix match of length >= 1
+            for (int len = i; len > 0; len--) {
+                String prefix = s.substring(0, len);
+                if (i + len <= s.length() && s.substring(i, i + len).equals(prefix)) {
+                    encoded.append("*");
+                    i += len;
+                    replaced = true;
+                    break;
+                }
+            }
+            if (!replaced) {
+                encoded.append(s.charAt(i));
+                i++;
+            }
+        }
+
+        return encoded.toString();
+    }
+}
+
+/*
+Test cases:
+
+Input: "abcabcabc"
+Output: "abc**"
+Explanation: First "abc" is preserved, next two "abc" sequences match the prefix and are replaced by '*'
+
+Input: "aaaaa"
+Output: "a****"
+Explanation: After the first 'a', every 'a' is a prefix repeat
+
+Input: "ababab"
+Output: "ab**"
+Explanation: "ab" is the prefix, next "ab" and "ab" are replaced
+
+Input: "xyzxyzxyz"
+Output: "xyz**"
+Explanation: Same logic as above, repeats of prefix "xyz"
+
+Input: "abcde"
+Output: "abcde"
+Explanation: No repeated prefixes
+
+Input: "aabaabaabaab"
+Output: "aab**"
+Explanation: Prefix "aab" repeats at the correct intervals
+
+Input: "abcabcxabcabc"
+Output: "abcxabc"
+Explanation: "abc" is replaced at position 3 but not at 6 due to the interrupting 'x'
+
+Input: ""
+Output: ""
+Explanation: Empty string remains empty
+*/
+
+```
+
+36.  first non-repeating counter
+"""
+A string was given. I needed to find the first non-repeating counter. If there is no such character, return 0.
+
+Input:
+asubsebusapd
+
+Output:
+e
+
+Input:
+aabbcc
+
+Output:
+0
+
+Pretty straight-forward.
+
+Used a hashmap to count the frequency.
+Traverse the array to find the first element with frequency = 1 and return it.
+If there is no such element, return 0.
+
+"""
+
+```java
+/**
+ * Efficient implementation to return the first non-repeating character in a string.
+ *
+ * Rationale:
+ * - Time complexity: O(n), where n is the length of the string.
+ *     * One pass to count character frequencies.
+ *     * One pass to find the first character with frequency == 1.
+ * - Space complexity: O(k), where k is the number of unique characters. Since the input is a string,
+ *   we use a HashMap<Character, Integer> to count frequencies.
+ * - The logic is straightforward: count, then scan.
+ * - Returns character '0' (as char) when no unique character is found, per spec.
+ */
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Solution {
+
+    /**
+     * Returns the first non-repeating character in the string.
+     *
+     * @param s input string of arbitrary characters
+     * @return first unique character, or '0' if none exists
+     */
+    public char firstNonRepeatingChar(String s) {
+        if (s == null || s.length() == 0) return '0';
+
+        Map<Character, Integer> frequencyMap = new HashMap<>();
+
+        // Count character frequencies
+        for (char c : s.toCharArray()) {
+            frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
+        }
+
+        // Find the first character with frequency == 1
+        for (char c : s.toCharArray()) {
+            if (frequencyMap.get(c) == 1) {
+                return c;
+            }
+        }
+
+        return '0'; // no non-repeating character
+    }
+}
+
+/*
+Test cases:
+
+Input: "asubsebusapd"
+Output: 'e'
+Explanation: All characters except 'e' occur multiple times
+
+Input: "aabbcc"
+Output: '0'
+Explanation: No unique character
+
+Input: "abc"
+Output: 'a'
+Explanation: All characters are unique; return first one
+
+Input: "z"
+Output: 'z'
+Explanation: Single character string is trivially unique
+
+Input: ""
+Output: '0'
+Explanation: Empty input returns default '0'
+
+Input: "aabbc"
+Output: 'c'
+Explanation: Only 'c' is non-repeating
+
+Input: "aabbccd"
+Output: 'd'
+Explanation: 'd' is the only character with frequency == 1
+
+Input: "😀😃😄😁😆😄😃😀"
+Output: '😁'
+Explanation: Works with unicode characters as well
+*/
+
+
+```
+
+
+37.  
+36. 
