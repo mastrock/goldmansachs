@@ -1,4 +1,4 @@
-Coderpad Questions
+<img width="559" alt="image" src="https://github.com/user-attachments/assets/7f6081f7-83a0-4d6b-a285-bb7755bd0372" />Coderpad Questions
 
 1. Suppose we are given a string “aaabbbbbccccdaa”, then we to print “a3b5c4d1a2”. 
     Run length encoding: https://github.com/jhasuraj01/6companies30days/blob/main/goldman-sachs/run-length-encoding.md
@@ -1590,4 +1590,244 @@ Explanation: Works with unicode characters as well
 
 
 37.  
-36. 
+36. Path with Maximum Gold
+
+"""
+1219. Path with Maximum Gold
+Medium
+Topics
+Companies
+Hint
+In a gold mine grid of size m x n, each cell in this mine has an integer representing the amount of gold in that cell, 0 if it is empty.
+
+Return the maximum amount of gold you can collect under the conditions:
+
+Every time you are located in a cell you will collect all the gold in that cell.
+From your position, you can walk one step to the left, right, up, or down.
+You can't visit the same cell more than once.
+Never visit a cell with 0 gold.
+You can start and stop collecting gold from any position in the grid that has some gold.
+ 
+
+Example 1:
+
+Input: grid = [[0,6,0],[5,8,7],[0,9,0]]
+Output: 24
+Explanation:
+[[0,6,0],
+ [5,8,7],
+ [0,9,0]]
+Path to get the maximum gold, 9 -> 8 -> 7.
+Example 2:
+
+Input: grid = [[1,0,7],[2,0,6],[3,4,5],[0,3,0],[9,0,20]]
+Output: 28
+Explanation:
+[[1,0,7],
+ [2,0,6],
+ [3,4,5],
+ [0,3,0],
+ [9,0,20]]
+Path to get the maximum gold, 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7.
+ 
+
+Constraints:
+
+m == grid.length
+n == grid[i].length
+1 <= m, n <= 15
+0 <= grid[i][j] <= 100
+There are at most 25 cells containing gold.
+
+"""
+
+```java
+
+import java.util.*;
+
+public class PathWithMaximumGold {
+
+    // Directions for moving up, down, left, right
+    private static final int[][] DIRECTIONS = {
+        {-1, 0},  // Up
+        {1, 0},   // Down
+        {0, -1},  // Left
+        {0, 1}    // Right
+    };
+    
+    private int rows;
+    private int cols;
+    private int[][] grid;
+    private boolean[][] visited;
+    private int maxGold;
+
+    /**
+     * Main method for quick testing. 
+     */
+    public static void main(String[] args) {
+        PathWithMaximumGold solver = new PathWithMaximumGold();
+
+        int[][] grid1 = {
+            {0, 6, 0},
+            {5, 8, 7},
+            {0, 9, 0}
+        };
+        System.out.println("Max Gold (Test 1): " + solver.getMaximumGold(grid1));
+        // Expected: 24 (For example, path 9->8->7)
+
+        int[][] grid2 = {
+            {1, 0, 7},
+            {2, 0, 6},
+            {3, 4, 5},
+            {0, 3, 0},
+            {9, 0, 20}
+        };
+        System.out.println("Max Gold (Test 2): " + solver.getMaximumGold(grid2));
+        // Expected: 28 (For example, path 1->2->3->4->5->6->7)
+    }
+
+    /**
+     * Returns the maximum gold that can be collected from the given grid.
+     */
+    public int getMaximumGold(int[][] grid) {
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return 0;
+        }
+
+        this.rows = grid.length;
+        this.cols = grid[0].length;
+        this.grid = grid;
+        this.visited = new boolean[rows][cols];
+        this.maxGold = 0;
+
+        // Start DFS from each cell that has gold
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] > 0) {
+                    dfs(r, c, 0);
+                }
+            }
+        }
+        return maxGold;
+    }
+
+    /**
+     * Depth-first search with backtracking.
+     * r, c - current row and column
+     * currentGold - gold collected up to this point
+     */
+    private void dfs(int r, int c, int currentGold) {
+        // Mark the cell as visited and add its gold
+        visited[r][c] = true;
+        currentGold += grid[r][c];
+
+        // Update global max if needed
+        maxGold = Math.max(maxGold, currentGold);
+
+        // Explore neighbors (up, down, left, right)
+        for (int[] dir : DIRECTIONS) {
+            int nr = r + dir[0];
+            int nc = c + dir[1];
+            if (isValid(nr, nc)) {
+                dfs(nr, nc, currentGold);
+            }
+        }
+
+        // Backtrack to allow this cell to be used in a different path
+        visited[r][c] = false;
+    }
+
+    /**
+     * Checks if a neighbor cell is valid: in bounds, has gold, and not visited.
+     */
+    private boolean isValid(int nr, int nc) {
+        return (nr >= 0 && nr < rows &&
+                nc >= 0 && nc < cols &&
+                grid[nr][nc] > 0 &&
+                !visited[nr][nc]);
+    }
+}
+
+```
+
+37. Path with maximum gold
+<img width="559" alt="image" src="https://github.com/user-attachments/assets/e684c883-b83b-4a6f-99fd-4fd5a3010f3c" />
+
+
+```java
+
+public class Solution {
+    
+    // Directions to move up, down, left, right
+    private static final int[][] DIRECTIONS = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}
+    };
+    
+    private int rows, cols;
+    private int[][] grid;
+    private boolean[][] visited;
+    private int maxGold;
+
+    public static void main(String[] args) {
+        // Example usage
+        Solution sol = new Solution();
+        
+        int[][] grid1 = {
+            {0, 6, 0},
+            {5, 8, 7},
+            {0, 9, 0}
+        };
+        System.out.println(sol.getMaximumGold(grid1)); // Expected 24
+        
+        int[][] grid2 = {
+            {1, 0, 7},
+            {2, 0, 6},
+            {3, 4, 5},
+            {0, 3, 0},
+            {9, 0, 20}
+        };
+        System.out.println(sol.getMaximumGold(grid2)); // Expected 28
+    }
+
+    public int getMaximumGold(int[][] grid) {
+        if (grid == null || grid.length == 0) return 0;
+        
+        this.rows = grid.length;
+        this.cols = grid[0].length;
+        this.grid = grid;
+        this.visited = new boolean[rows][cols];
+        this.maxGold = 0;
+
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] > 0) {
+                    dfs(r, c, 0);
+                }
+            }
+        }
+        
+        return maxGold;
+    }
+    
+    private void dfs(int r, int c, int currentGold) {
+        visited[r][c] = true;
+        currentGold += grid[r][c];
+        maxGold = Math.max(maxGold, currentGold);
+        
+        for (int[] d : DIRECTIONS) {
+            int nr = r + d[0], nc = c + d[1];
+            if (isValid(nr, nc)) {
+                dfs(nr, nc, currentGold);
+            }
+        }
+        
+        visited[r][c] = false; // backtrack
+    }
+
+    private boolean isValid(int r, int c) {
+        return (r >= 0 && r < rows && c >= 0 && c < cols &&
+                grid[r][c] > 0 && !visited[r][c]);
+    }
+}
+
+```
